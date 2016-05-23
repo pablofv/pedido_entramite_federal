@@ -22,15 +22,16 @@ RESULTADO: 1183 Expedientes y 1860 registros (Expedientes con sus delitos - SUB-
 
 */
 
-/* Para el pedido de los mismos 1860/1183 EXPEDIENTES - pidieron "misma consulta" contados por año de inicio */
+/* Para el pedido de la misma lógica -voy a tomar los mismos 1860 registros de antes, pero contados por juzgado */
 
-/* Agrupo por año de la causa, y cuento la cantidad */
+/* Voy a agrupar por el campo de EXPEDIENTE ID_OFICINA_ACTUAL */
 
-SELECT CAU.ANIO_EXPEDIENTE, count(distinct id_expediente)
+SELECT descripcion, count(distinct id_expediente)
 FROM (select  e.anio_expediente,
               e.numero_expediente,
               e.id_expediente,
               nvl(e.CARATULA_EXPEDIENTE, 'sin carátula') caratula_expediente,
+              e.ID_OFICINA_ACTUAL juzgado, -- considero que este campo tiene la oficina donde está el expediente actualmente, que es donde nos interesa contarlo en este pedido particular
               e.naturaleza_expediente,
               e.id_tipo_causa,
               E.SITUACION_EXPEDIENTE,
@@ -43,7 +44,8 @@ FROM (select  e.anio_expediente,
       and     e.status <> -1                     
       and     d.titulo = 11
       and     e.naturaleza_expediente in ('P')
-      order by e.anio_expediente, e.numero_expediente, e.naturaleza_expediente) CAU
-group by CAU.ANIO_EXPEDIENTE
-order by CAU.ANIO_EXPEDIENTE
+      order by e.anio_expediente, e.numero_expediente, e.naturaleza_expediente) CAU join lex100maestras.oficina o on cau.juzgado = o.id_oficina
+where id_tipo_oficina in (1, 2) -- filtro solo por los juzgados y las secretarías
+group by descripcion
+order by descripcion
 ;
