@@ -22,9 +22,11 @@ RESULTADO: 1183 Expedientes y 1860 registros (Expedientes con sus delitos - SUB-
 
 */
 
+/* Para el pedido de los mismos 1860/1183 EXPEDIENTES - pidieron "misma consulta" contados por año de inicio */
 
+/* Agrupo por año de la causa, y cuento la cantidad */
 
-SELECT CAU.NUMERO_EXPEDIENTE, CAU.ANIO_EXPEDIENTE, cau.CARATULA_EXPEDIENTE
+SELECT CAU.ANIO_EXPEDIENTE, count(distinct id_expediente)
 FROM (select  e.anio_expediente,
               e.numero_expediente,
               e.id_expediente,
@@ -42,5 +44,6 @@ FROM (select  e.anio_expediente,
       and     d.titulo = 11
       and     e.naturaleza_expediente in ('P')
       order by e.anio_expediente, e.numero_expediente, e.naturaleza_expediente) CAU
-group by CAU.NUMERO_EXPEDIENTE, CAU.ANIO_EXPEDIENTE, cau.CARATULA_EXPEDIENTE
+group by CAU.ANIO_EXPEDIENTE
+order by CAU.ANIO_EXPEDIENTE
 ;
